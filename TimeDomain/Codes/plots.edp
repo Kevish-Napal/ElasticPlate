@@ -1,0 +1,35 @@
+// Plots
+
+
+
+if(PlotFlag == 1)
+{
+
+  // Configuration
+  PlotTemp = lambda1(x,y);
+  plot(PlotTemp,wait =1,fill=1,cmm="lambda");
+  PlotTemp = mu1(x,y);
+  plot(PlotTemp,wait =1,fill=1,cmm="mu");
+  PlotTemp = rho1(x,y);
+  plot(PlotTemp,wait =1,fill=1,cmm="rho");
+
+  
+  // Sources terms
+  plot(fx,wait =1,fill=1,cmm="fx");
+  plot(fy,wait =1,fill=1,cmm="fy");
+
+  //fields
+  PlotTemp = real(ux);
+  plot(PlotTemp,wait=0,fill=1,value=1,cmm="Real(ux)");
+
+  PlotTemp = real(uy);
+  plot(PlotTemp,wait=0,fill=1,value=1,cmm="Real(uy)");
+
+  // PlotTemp = imag(ux);
+  // plot(PlotTemp,wait=1,fill=1,value=1,cmm="Image(ux)");
+  //
+  // PlotTemp = imag(uy);
+  // plot(PlotTemp,wait=1,fill=1,value=1,cmm="Image(uy)");
+
+
+} // EO plots

@@ -1,0 +1,158 @@
+//int mpisize = 24;
+//int mpirank = 0;
+
+
+
+
+real DiracAmplitude = 1000/(SquareSize);
+
+cout << "TotalEmitters " << TotalEmitters << endl;
+
+int[int] EmDivMpi(2);
+EmDivMpi = EuclidianDivision(TotalEmitters,mpisize);
+int QMPI = EmDivMpi(0);
+int RMPI = EmDivMpi(1);
+
+cout << "TotalEmitters = mpisize * " << QMPI << " + " << RMPI << " = " << TotalEmitters<< endl;
+
+for(int Proc = 0; Proc< mpisize; Proc++)
+{ // Boucle for sur proc
+
+	if(mpirank == Proc)
+	{ // boucle if sur proc
+
+		include "Codes/VarUP.edp"
+
+    int NbEmitter = QMPI;
+    if(Proc<RMPI){
+      NbEmitter+=1;
+    }
+    cout  << "Proc: " << Proc << endl;
+    int EmitterBegin = Proc*QMPI + min(RMPI,Proc);
+    int EmitterEnd = EmitterBegin+NbEmitter-1;
+
+    cout << "NbEmitter: "  << NbEmitter<< ", EmitterBegin: " <<  EmitterBegin << ", EmitterEnd: "  << EmitterEnd << endl;
+
+    string StrEmitterBegin = EmitterBegin;
+    string StrEmitterEnd = EmitterEnd;
+    string StrSplitEmitter = StrEmitterBegin + "-" + StrEmitterEnd;
+    cout << "Split Emitters: " << StrSplitEmitter << endl;
+
+    cout << "-----------------------------" << endl;
+
+
+    real[int,int] UXR(NbReceptor,NbEmitter);
+    real[int,int] UXI(NbReceptor,NbEmitter);
+    real[int,int] UYR(NbReceptor,NbEmitter);
+    real[int,int] UYI(NbReceptor,NbEmitter);
+    real[int,int] WXR(NbReceptor,NbEmitter);
+    real[int,int] WXI(NbReceptor,NbEmitter);
+    real[int,int] WYR(NbReceptor,NbEmitter);
+    real[int,int] WYI(NbReceptor,NbEmitter);
+    real[int,int] PR(NbReceptor,NbEmitter);
+    real[int,int] PI(NbReceptor,NbEmitter);
+
+for(int i=0; i<NbEmitter;i++)
+{
+ int iE = EmitterBegin+i;
+  if(ChooseSourceType == 0){
+    f1x = DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+  if(ChooseSourceType == 1){
+    f1y = DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+  if(ChooseSourceType == 2){
+    f2x = DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+
+
+      F1x = f1x-rhof/rhom*f2x;
+      F1y = f1y-rhof/rhom*f2y;
+      F2 = div(f2x,f2y);
+
+      timer = clock();
+      VarUP;
+      cout << "VarUP, time/Emitter:" << clock() - timer << endl;
+
+      // computation of w from the solutions u, p
+      wx = ((f2x + dx(p))/om^2 - rhof*ux)/rhom;
+      wy = ((f2y + dy(p))/om^2 - rhof*uy)/rhom;
+
+      for(int j=0;j<NbReceptor;j++)
+      {
+        ReceptorX = Receptor(j,0); ReceptorY = Receptor(j,1);
+
+        UXR(j,i) = real(ux(ReceptorX,ReceptorY)); UYR(j,i) = real(uy(ReceptorX,ReceptorY));
+        UXI(j,i) = imag(ux(ReceptorX,ReceptorY)); UYI(j,i) = imag(uy(ReceptorX,ReceptorY));
+        WXI(j,i) = imag(wx(ReceptorX,ReceptorY)); WYI(j,i) = imag(wy(ReceptorX,ReceptorY));
+        WXR(j,i) = real(wx(ReceptorX,ReceptorY)); WYR(j,i) = real(wy(ReceptorX,ReceptorY));
+        PR(j,i) = real(p(ReceptorX,ReceptorY)); PI(j,i) = imag(p(ReceptorX,ReceptorY));
+      }
+
+      //include "Codes/plots.edp"
+
+      // if(i==500){
+      //     include "Codes/ScFields.edp"
+      // }
+
+
+
+
+    } // EO itersources
+
+
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXR_" + StrSplitEmitter + ".dat",append);
+  fileoutput << UXR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXI_" + StrSplitEmitter + ".dat",append);
+  fileoutput << UXI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYR_" + StrSplitEmitter + ".dat",append);
+  fileoutput << UYR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYI_" + StrSplitEmitter + ".dat",append);
+  fileoutput << UYI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/WXR_" + StrSplitEmitter + ".dat",append);
+  fileoutput << WXR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/WXI_" + StrSplitEmitter + ".dat",append);
+  fileoutput << WXI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/WYR_" + StrSplitEmitter + ".dat",append);
+  fileoutput << WYR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/WYI_" + StrSplitEmitter + ".dat",append);
+  fileoutput << WYI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/PR_" + StrSplitEmitter + ".dat",append);
+  fileoutput << PR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/PI_" + StrSplitEmitter + ".dat",append);
+  fileoutput << PI;
+  } ;
+
+}} // end of mpi loops

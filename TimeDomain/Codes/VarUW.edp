@@ -1,0 +1,20 @@
+// Defines the problem VarUW Problem
+
+Vh<complex> ux1, uy1, uux1, uuy1;
+Vh<complex> wx1, wy1,wwx1,wwy1;
+
+problem VarUW([ux1, uy1, wx1, wy1], [uux1, uuy1, wwx1, wwy1])
+= int2d(Th)(
+  //
+    lambda*beta*M*div(ux1,uy1)*div(uux1,uuy1)
+  + 2.*mu*beta*M*(epsilon(ux1,uy1)'*epsilon(uux1,uuy1))
+  + beta*puw(ux1,uy1,wx1,wy1)*puw(uux1,uuy1,wwx1,wwy1)
+  - om^2*M*(
+          beta*((rho*ux1+rhof*wx1)*uux1+(rho*uy1+rhof*wy1)*uuy1)
+        + beta*((rhof*ux1+rhom*wx1)*wwx1+(rhof*uy1+rhom*wy1)*wwy1)
+           )
+)
+//
++ int2d(Th)(beta*M*(f1x*uux1+f1y*uuy1)+beta*M*(f2x*wwx1+f2y*wwy1))
+ //+ on(ExtCond,crack,ux1=0,uy1=0)
+;

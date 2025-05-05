@@ -1,0 +1,91 @@
+include "Codes/Configurations.edp"
+include "Codes/VarU0.edp"
+
+
+real DiracAmplitude = 1000/(SquareSize);
+real DiracMagnitude = 1e2;
+int NbEmitter = EmitterEnd - EmitterBegin + 1;
+cout << "NbEmitter: "  << NbEmitter<< ", EmitterBegin: " <<  EmitterBegin << ", EmitterEnd: "  << EmitterEnd << endl;
+
+string StrEmitterBegin = EmitterBegin;
+string StrEmitterEnd = EmitterEnd;
+string StrSplitEmitter = StrEmitterBegin + "-" + StrEmitterEnd;
+cout << "Split Emitters: " << StrSplitEmitter << endl;
+
+
+cout << "NbEmitter" << NbEmitter << endl;
+
+real[int,int] UXR(NbReceptor,NbEmitter);
+real[int,int] UXI(NbReceptor,NbEmitter);
+real[int,int] UYR(NbReceptor,NbEmitter);
+real[int,int] UYI(NbReceptor,NbEmitter);
+real[int,int] WXR(NbReceptor,NbEmitter);
+real[int,int] WXI(NbReceptor,NbEmitter);
+real[int,int] WYR(NbReceptor,NbEmitter);
+real[int,int] WYI(NbReceptor,NbEmitter);
+real[int,int] PR(NbReceptor,NbEmitter);
+real[int,int] PI(NbReceptor,NbEmitter);
+
+for(int i=0; i<NbEmitter;i++)
+{
+  int iE = EmitterBegin + i;
+  if(ChooseSourceType == 0){
+    fx = DiracMagnitude*DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+  if(ChooseSourceType == 1){
+    fy = DiracMagnitude*DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+
+
+      timer = clock();
+      VarU;
+      cout << "VarUP, time/Emitter:" << clock() - timer << endl;
+      include "Codes/plots.edp"
+
+      for(int j=0;j<NbReceptor;j++)
+      {
+        ReceptorX = Receptor(j,0); ReceptorY = Receptor(j,1);
+
+        UXR(j,i) = real(ux(ReceptorX,ReceptorY)); UYR(j,i) = real(uy(ReceptorX,ReceptorY));
+        UXI(j,i) = imag(ux(ReceptorX,ReceptorY)); UYI(j,i) = imag(uy(ReceptorX,ReceptorY));
+      }
+
+
+
+
+      // if(iE==500){
+      //     include "Codes/VarUP0.edp"
+      //     timer = clock();
+      //     VarUP0;
+      //     cout << "VarUP0, time/Emitter:" << clock() - timer << endl;
+      //
+      //     include "plotsScFields.edp"
+      // }
+
+
+    } // EO itersources
+
+
+
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXR_" + StrSplitEmitter + ".dat");
+  fileoutput << UXR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXI_" + StrSplitEmitter + ".dat");
+  fileoutput << UXI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYR_" + StrSplitEmitter + ".dat");
+  fileoutput << UYR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYI_" + StrSplitEmitter + ".dat");
+  fileoutput << UYI;
+  } ;

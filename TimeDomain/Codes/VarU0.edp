@@ -1,0 +1,47 @@
+//FE space and defines the VarU problem.
+
+int pSquare = SquareSize/lambdas*MeshPerLambdas;
+
+mesh Th=buildmesh(
+Qdown(pSquare)+Qright(pSquare)+Qup(pSquare)+Qleft(pSquare)
+);
+
+if(PlotFlag==1)
+{
+plot(Th,wait=1);
+}
+
+// Fespace
+fespace Vh(Th,P1);
+
+// solutions u and p
+Vh<complex> ux0=0,uy0=0,dtux0=0,dtuy0=0,ux, uy,dtux,dtuy, uux, uuy,dtuux,dtuuy;
+
+
+
+
+// Allocation of Source terms
+Vh fx = 0;
+Vh fy = 0;
+
+real timer;
+
+// Problem
+problem VarU([ux,uy,dtux,dtuy],[uux,uuy,dtuux,dtuuy])
+  =
+  int2d(Th)(
+    // equation for dtu = dt(u) ~ (u-u0)\h
+    (dtux-1/dt*ux)*conj(dtuux)+(dtuy-1/dt*uy)*conj(dtuuy)
+    // Elastic Equation for u
+    + lambda1(x,y)*div(ux,uy)*conj(div(uux,uuy))
+    + 2.*mu1(x,y)*(epsilon(uux,uuy)'*epsilon(ux,uy))
+    + rho1(x,y)/dt*(dtux*conj(uux)+dtuy*conj(uuy))
+)
+// Source terms
+       + int2d(Th)(
+        - fx*rho1(x,y)*conj(uux)-fy*rho1(x,y)*conj(uuy)
+        + 1/dt*ux0*conj(dtuux)+1/dt*uy0*conj(dtuuy)
+        - rho1(x,y)/dt*(dtux0*conj(uux)+dtuy0*conj(uuy)) // source term for approx dt(dtux)
+        )
+        //+ on(ExtCond,ux=0,uy=0,dtux=0,dtuy=0) // Comment for free traction.
+  ;

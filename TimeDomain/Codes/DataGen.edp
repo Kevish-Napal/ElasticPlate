@@ -1,0 +1,105 @@
+include "Codes/Configurations.edp"
+include "Codes/VarU0.edp"
+
+
+real DiracAmplitude = 1000/(SquareSize);
+real DiracMagnitude = 1e2;
+int NbEmitter = EmitterEnd - EmitterBegin + 1;
+cout << "NbEmitter: "  << NbEmitter<< ", EmitterBegin: " <<  EmitterBegin << ", EmitterEnd: "  << EmitterEnd << endl;
+
+string StrEmitterBegin = EmitterBegin;
+string StrEmitterEnd = EmitterEnd;
+string StrSplitEmitter = StrEmitterBegin + "-" + StrEmitterEnd;
+cout << "Split Emitters: " << StrSplitEmitter << endl;
+
+
+cout << "NbEmitter" << NbEmitter << endl;
+
+Vh PlotTemp;
+real tt;
+real[int] TimeList = 0:dt:Tf;
+int nT = TimeList.n;
+
+{
+ofstream fileoutput(DataFileOutput+ "/TimeList" + ".dat");
+fileoutput<< TimeList;
+} ;
+
+
+Vh diracx,diracy;
+
+real[int,int] UXR(NbReceptor,nT);
+real[int,int] UXI(NbReceptor,nT);
+real[int,int] UYR(NbReceptor,nT);
+real[int,int] UYI(NbReceptor,nT);
+
+
+
+
+
+
+for(int i=0; i<NbEmitter;i++)
+{
+  int iE = EmitterBegin + i;
+  if(ChooseSourceType == 0){
+    diracx = DiracMagnitude*DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+  if(ChooseSourceType == 1){
+    diracy = DiracMagnitude*DiracAmplitude*Dirac(DiracAmplitude*((x-Emitter(iE,0))^2+(y-Emitter(iE,1))^2));
+  }
+
+int itert=0;
+while(itert<nT){
+
+  fx  = cos(om*tt)*diracx;
+  fy  = cos(om*tt)*diracy;
+
+      timer = clock();
+      VarU;
+      cout << "VarUP, time/Emitter:" << clock() - timer << endl;
+      include "Codes/plots.edp"
+
+      for(int j=0;j<NbReceptor;j++)
+      {
+        ReceptorX = Receptor(j,0); ReceptorY = Receptor(j,1);
+
+        UXR(j,itert) = real(ux(ReceptorX,ReceptorY)); UYR(j,itert) = real(uy(ReceptorX,ReceptorY));
+        UXI(j,itert) = imag(ux(ReceptorX,ReceptorY)); UYI(j,itert) = imag(uy(ReceptorX,ReceptorY));
+      }
+
+itert=itert+1;
+tt=tt+dt;
+dtux0[] = ux[]-ux0[]; dtux0[] = 1/dt*dtux0[];
+dtuy0[] = uy[]-uy0[]; dtuy0[] = 1/dt*dtuy0[];
+ux0[]=ux[];
+uy0[]=uy[];
+}
+
+
+
+
+    } // EO itersources
+
+
+
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXR_" + StrSplitEmitter + ".dat");
+  fileoutput << UXR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UXI_" + StrSplitEmitter + ".dat");
+  fileoutput << UXI;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYR_" + StrSplitEmitter + ".dat");
+  fileoutput << UYR;
+  } ;
+
+  {
+  ofstream fileoutput(DataFileOutput + "/UYI_" + StrSplitEmitter + ".dat");
+  fileoutput << UYI;
+  } ;

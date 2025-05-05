@@ -1,0 +1,81 @@
+// Discretizai0n of Emitors
+real[int] EmitterX;real[int] EmitterY;
+// Square discretization
+real Zmin = -SourcesSquareSize/2; real Zmax = SourcesSquareSize/2;
+real dz = dSource; // number of sensors per side.
+real [int] Zx = Zmin:dz:(Zmax);
+real [int] RevZx = Zmax:(-dz):(Zmin);
+real[int] temp(Zx.n);
+
+// Bottom
+temp = Zmin;
+EmitterX = [Zx];
+EmitterY = [temp];
+// right
+temp = Zmax;
+EmitterX = [EmitterX,temp];
+EmitterY = [EmitterY,Zx];
+// top
+EmitterX = [EmitterX,RevZx];
+EmitterY = [EmitterY,temp];
+// left
+temp = Zmin;
+EmitterX = [EmitterX,temp];
+EmitterY = [EmitterY,RevZx];
+
+real [int,int] Emitter(EmitterX.n,2);
+for(int i=0;i<EmitterX.n;i++)
+{
+  Emitter(i,0) = EmitterX(i);
+  Emitter(i,1) = EmitterY(i);
+}
+
+
+// Discretizai0n of Receptors
+real[int] ReceptX;real[int] ReceptY;
+// Square discretization
+Zmin = -MeasurementsSquareSize/2;  Zmax = MeasurementsSquareSize/2;
+dz = dMeasure; // number of sensors per side.
+ReceptX = Zmin:dz:(Zmax);
+ReceptY = Zmin:dz:(Zmax);
+int remplissage=0;
+real [int,int] Receptor(ReceptX.n*ReceptY.n,2);
+for(int j=0;j<ReceptY.n;j++)
+{
+  for(int i=0;i<ReceptX.n;i++)
+  {
+    Receptor(remplissage,0) = ReceptX(i);
+    Receptor(remplissage,1) = ReceptY(j);
+    remplissage = remplissage+1;
+  }
+}
+
+
+
+
+int TotalEmitters = Emitter.n;
+int NbReceptor = Receptor.n;
+
+// Discretization of Receptors
+
+
+cout << "---------- Sensors ----------" << endl;
+
+cout << "Whole range for Emitters: 0-" << TotalEmitters-1 << "(total: " << TotalEmitters << ")" << endl;
+// Choose Emitters for splitting the computations:
+// Values must be between o and TotalEmitters.
+
+
+real ReceptorX,ReceptorY;
+
+string DataFileOutput = "Data_" + SourceType[ChooseSourceType];
+exec("mkdir " + DataFileOutput);
+{
+ofstream fileoutput(DataFileOutput+ "/Sources" + ".dat");
+fileoutput<< Emitter;
+} ;
+
+{
+ofstream fileoutput(DataFileOutput+ "/Sensors" + ".dat");
+fileoutput<< Receptor;
+} ;

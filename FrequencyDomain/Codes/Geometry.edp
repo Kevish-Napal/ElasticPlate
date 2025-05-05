@@ -1,0 +1,34 @@
+// Define the borders: Square
+
+// labels
+int ExtCond = 99;
+// borders of plate
+border Qdown(t=0,1){x=SquareSize*(t-.5);y=-SquareSize/2;label = ExtCond;}
+border Qleft(t=0,1){x=SquareSize/2;y=SquareSize*(t-.5);label = ExtCond;}
+border Qup(t=0,1){x=-SquareSize*(t-.5);y=SquareSize/2;label = ExtCond;}
+border Qright(t=0,1){x=-SquareSize/2;y=-SquareSize*(t-.5);label = ExtCond;}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+////////////////////////// Sensors Visualization //////////////////////////
+///////////////////////////////////////////////////////////////////////////
+{
+border Mdown(t=0,1){x=MeasurementsSquareSize*(t-.5);y=-MeasurementsSquareSize/2;}
+border Mleft(t=0,1){x=MeasurementsSquareSize/2;y=MeasurementsSquareSize*(t-.5);}
+border Mup(t=0,1){x=-MeasurementsSquareSize*(t-.5);y=MeasurementsSquareSize/2;}
+border Mright(t=0,1){x=-MeasurementsSquareSize/2;y=-MeasurementsSquareSize*(t-.5);}
+
+border Sdown(t=0,1){x=SourcesSquareSize*(t-.5);y=-SourcesSquareSize/2;}
+border Sleft(t=0,1){x=SourcesSquareSize/2;y=SourcesSquareSize*(t-.5);}
+border Sup(t=0,1){x=-SourcesSquareSize*(t-.5);y=SourcesSquareSize/2;}
+border Sright(t=0,1){x=-SourcesSquareSize/2;y=-SourcesSquareSize*(t-.5);}
+
+plot(
+Qdown(30)+Qright(30)+Qup(30)+Qleft(30)
++Mdown(30)+Mright(30)+Mup(30)+Mleft(30)
++Sdown(30)+Sright(30)+Sup(30)+Sleft(30)
+,wait=PlotFlag
+);
+;
+}

@@ -1,0 +1,17 @@
+include "/Users/kev/Documents/FreeFemDoc/Lib/ffmatlib.idp"
+
+//Save mesh
+savemesh(Th,"Plate.msh");
+//Save finite element space connectivity
+ffSaveVh(Th,Vh,"Plate_vh.txt");
+
+Vh<complex> DataX, DataY;
+
+DataX = ux-ux0; DataY = uy-uy0;
+ffSaveData2(DataX,DataY,"U.txt");
+
+DataX = wx-wx0; DataY = wy-wy0;
+ffSaveData2(DataX,DataY,"W.txt");
+
+DataX = p-p0;
+ffSaveData(DataX,"P.txt");

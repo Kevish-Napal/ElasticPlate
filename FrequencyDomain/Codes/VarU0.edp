@@ -1,0 +1,41 @@
+//FE space and defines the VarU problem.
+
+int pSquare = SquareSize/lambdas*MeshPerLambdas;
+
+mesh Th=buildmesh(
+Qdown(pSquare)+Qright(pSquare)+Qup(pSquare)+Qleft(pSquare)
+);
+
+if(PlotFlag==1)
+{
+plot(Th,wait=1);
+}
+
+// Fespace
+fespace Vh(Th,P2);
+
+// solutions u and p
+Vh<complex> ux, uy, uux, uuy;
+
+
+
+// Allocation of Source terms
+Vh fx = 0;
+Vh fy = 0;
+
+real timer;
+
+// Problem
+problem VarU([ux,uy],[uux,uuy])
+  =
+  int2d(Th)(
+    // Equation for u
+      lambda1(x,y)*div(ux,uy)*conj(div(uux,uuy))
+    + 2.*mu1(x,y)*(epsilon(uux,uuy)'*epsilon(ux,uy))
+    - rho1(x,y)*om^2*(ux*conj(uux)+uy*conj(uuy))
+)
+// Source terms
+       + int2d(Th)(
+        - fx*rho1(x,y)*conj(uux)-fy*rho1(x,y)*conj(uuy))
+       // + on(ExtCond,ux=0,uy=0) // Comment for free traction.
+  ;

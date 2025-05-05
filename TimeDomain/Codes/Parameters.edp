@@ -1,0 +1,46 @@
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////// Select Parameters ////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
+real om = 3.91;
+real rho = 1;
+real lambda = 0.47;
+real mu = 1.;
+
+
+real lambdas = 2*pi*sqrt(mu/rho)/om;
+real T = 2*pi/om;
+real Tf = 5*T;
+real dt = .05*T;
+
+real SquareSize = 10*lambdas;
+real SourcesSquareSize = 8*lambdas;
+real MeasurementsSquareSize = 5*lambdas;
+real dMeasure = lambdas/10;
+real dSource = lambdas;
+
+int MeshPerLambdas = 10;
+
+string[int] PlateConfig = ["Homogeneous","Disc Inclusion","4 Regions"];
+int ChoosePlateConfig = 1;
+
+
+cout << "---------- Parameters ----------" << endl;
+cout << "omega = " << om << endl
+<< "mu = " << mu << endl
+<< "lambda = " << lambda << endl
+<< "lambda_s = " << lambdas << endl
+<< "T = " << T << endl
+<< "Tf = " << Tf << endl
+<< "dt = " << dt << endl << endl;
+
+cout << "SquareSize: " << SquareSize << endl
+<< "SourcesSquareSize: " << SourcesSquareSize << endl
+<< "MeasurementsSquareSize: " << MeasurementsSquareSize << endl << endl;
+
+cout << "Background: " << PlateConfig[ChoosePlateConfig] << endl<< endl;
+
+cout << "Source Type: " << SourceType[ChooseSourceType] << endl
+<< "--------------------------------" << endl<<endl;
+;

@@ -1,0 +1,79 @@
+// Outputs the fields on the square for visualization on matlab
+exec("mkdir Fields");
+real[int] Y = -SquareSize/2:lambdas/50:SquareSize/2;
+{ // the line:
+ofstream fileoutput("Fields/Y" + ".dat");
+fileoutput<< Y;
+} ;
+real[int,int] FullRP(Y.n,Y.n);
+real[int,int] FullRUx(Y.n,Y.n);
+real[int,int] FullRUy(Y.n,Y.n);
+real[int,int] FullRWx(Y.n,Y.n);
+real[int,int] FullRWy(Y.n,Y.n);
+real[int,int] FullIP(Y.n,Y.n);
+real[int,int] FullIUx(Y.n,Y.n);
+real[int,int] FullIUy(Y.n,Y.n);
+real[int,int] FullIWx(Y.n,Y.n);
+real[int,int] FullIWy(Y.n,Y.n);
+
+for(int i = 0;i<Y.n;i++)
+{
+  for(int j = 0;j<Y.n;j++)
+  {
+    FullRUx(i,j) = real(ux(Y(j),Y(i)))-real(ux0(Y(j),Y(i)));
+    FullRUy(i,j) = real(uy(Y(j),Y(i)))-real(uy0(Y(j),Y(i)));
+    FullIUx(i,j) = imag(ux(Y(j),Y(i)))-imag(ux0(Y(j),Y(i)));
+    FullIUy(i,j) = imag(uy(Y(j),Y(i)))-imag(uy0(Y(j),Y(i)));
+
+    FullRWx(i,j) = real(wx(Y(j),Y(i)))-real(wx0(Y(j),Y(i)));
+    FullRWy(i,j) = real(wy(Y(j),Y(i)))-real(wy0(Y(j),Y(i)));
+    FullIWx(i,j) = imag(wx(Y(j),Y(i)))-imag(wx0(Y(j),Y(i)));
+    FullIWy(i,j) = imag(wy(Y(j),Y(i)))-imag(wy0(Y(j),Y(i)));
+
+    FullRP(i,j) = real(p(Y(j),Y(i)))-real(p0(Y(j),Y(i)));
+    FullIP(i,j) = imag(p(Y(j),Y(i)))-imag(p0(Y(j),Y(i)));
+  }
+}
+
+{
+ofstream fileoutput("Fields/FullRUx" + ".dat");
+fileoutput<< FullRUx;
+} ;
+{
+ofstream fileoutput("Fields/FullRUy" + ".dat");
+fileoutput<< FullRUy;
+} ;
+{
+ofstream fileoutput("Fields/FullIUx" + ".dat");
+fileoutput<< FullIUx;
+} ;
+{
+ofstream fileoutput("Fields/FullIUy" + ".dat");
+fileoutput<< FullIUy;
+} ;
+
+{
+ofstream fileoutput("Fields/FullRWx" + ".dat");
+fileoutput<< FullRWx;
+} ;
+{
+ofstream fileoutput("Fields/FullRWy" + ".dat");
+fileoutput<< FullRWy;
+} ;
+{
+ofstream fileoutput("Fields/FullIWx" + ".dat");
+fileoutput<< FullIWx;
+} ;
+{
+ofstream fileoutput("Fields/FullIWy" + ".dat");
+fileoutput<< FullIWy;
+} ;
+
+{
+ofstream fileoutput("Fields/FullRP" + ".dat");
+fileoutput<< FullRP;
+} ;
+{
+ofstream fileoutput("Fields/FullIP" + ".dat");
+fileoutput<< FullIP;
+} ;
